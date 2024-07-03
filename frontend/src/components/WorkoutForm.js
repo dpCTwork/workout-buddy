@@ -1,9 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react"
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
+import { useAuthContext } from "../hooks/useAuthContext"
 
 const WorkoutForm = () => {
 	const { dispatch } = useWorkoutsContext()
+
+	const { user } = useAuthContext()
 
 	const [title, setTitle] = useState("")
 	const [load, setLoad] = useState("")
@@ -14,6 +17,11 @@ const WorkoutForm = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 
+		if (!user) {
+			setError("You must be logged in to add a workout")
+			return
+		}
+
 		const workout = { title, load, reps }
 
 		const response = await fetch("/api/workouts", {
@@ -21,6 +29,7 @@ const WorkoutForm = () => {
 			body: JSON.stringify(workout),
 			headers: {
 				"Content-Type": "application/json",
+				Authorization: `Bearer ${user.token}`,
 			},
 		})
 

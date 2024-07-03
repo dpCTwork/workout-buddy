@@ -7,7 +7,14 @@ const {
 	updateWorkout,
 } = require("../controllers/workoutController")
 
+const requireAuth = require("../middleware/requireAuth")
+
 const router = express.Router()
+
+// Protect all routes in this file
+// This will run the requireAuth middleware before any of the routes are executed.
+// The next() function in the middleware will call the next route handler.
+router.use(requireAuth)
 
 // GET all workouts
 router.get("/", getWorkouts)
